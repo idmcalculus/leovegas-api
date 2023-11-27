@@ -1,5 +1,4 @@
-// jwt.constants.ts
 export const jwtConstants = {
-  secret: 'secretKey', // You should use a more secure key and store it in environment variables
+  secret: process.env.JWT_SECRET,
   expiresIn: '60s',
 };

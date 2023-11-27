@@ -1,27 +1,37 @@
-import { ApiProperty } from '@nestjs/swagger';
-
 export class UserDto {
-  @ApiProperty({ example: 1 })
+  /*
+   * ID of the user
+   * @example 1
+   */
   id: number;
 
-  @ApiProperty({ example: 'John Doe' })
+  /*
+   * Full name of the user
+   * @example John Doe
+   */
   name: string;
 
-  @ApiProperty({ example: 'john.doe@example.com' })
+  /*
+   * Email of the user
+   * @example user@email.com
+   */
   email: string;
 
-  // Do not expose passwords in the API!
-  // password: string; // This should not be included in the UserDto
-
-  @ApiProperty({ example: 'USER' })
+  /*
+   * Role of the user
+   * @example USER
+   */
   role: string;
 
-  // Typically you also do not expose access tokens in such DTOs
-  // access_token?: string; // This should probably not be included in the UserDto
-
-  @ApiProperty({ example: '2023-11-26T00:00:00.000Z' })
+  /*
+   * Date when the user was created
+   * @example 2023-11-26T00:00:00.000Z
+   */
   createdAt: Date;
 
-  @ApiProperty({ example: '2023-11-26T00:00:00.000Z' })
+  /*
+   * Date when the user was updated
+   * @example 2023-11-26T00:00:00.000Z
+   */
   updatedAt: Date;
 }
