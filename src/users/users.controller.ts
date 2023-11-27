@@ -30,18 +30,11 @@ export class RemoveUserResponse {
   success: boolean;
 }
 
-@ApiBearerAuth()
 @ApiTags('users')
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  /**
-   * Create a new user
-   * @param createUserDto - The user data to create
-   * @returns The created user
-   */
   @Post()
   @ApiResponse({
     status: 201,
@@ -53,11 +46,9 @@ export class UsersController {
     return this.usersService.createUser(createUserDto);
   }
 
-  /**
-   * Get all users (Admin only)
-   * @returns An array of users
-   */
+  @ApiBearerAuth()
   @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   @ApiResponse({
     status: 200,
@@ -69,11 +60,8 @@ export class UsersController {
     return this.usersService.findAll(req.user);
   }
 
-  /**
-   * Get a user by ID
-   * @param id - The ID of the user to retrieve
-   * @returns The requested user
-   */
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiResponse({
     status: 200,
@@ -86,12 +74,8 @@ export class UsersController {
     return this.usersService.findOne(req.user, +id);
   }
 
-  /**
-   * Update a user's information
-   * @param id - The ID of the user to update
-   * @param updateDto - The updated user data
-   * @returns The updated user
-   */
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   @ApiResponse({
     status: 200,
@@ -108,12 +92,9 @@ export class UsersController {
     return this.usersService.updateUser(req.user, +id, updateDto);
   }
 
-  /**
-   * Delete a user by ID (Admin only)
-   * @param id - The ID of the user to delete
-   * @returns A success status
-   */
+  @ApiBearerAuth()
   @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   @ApiResponse({
     status: 200,

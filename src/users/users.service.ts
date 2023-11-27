@@ -2,16 +2,46 @@ import {
   Injectable,
   ForbiddenException,
   NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { User, Prisma } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({ data });
+    // Check if the email already exists
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (existingUser) {
+      throw new ConflictException('Email already in use');
+    }
+
+    // Encrypt the password
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    // Save the new user with the encrypted password
+    return this.prisma.user.create({
+      data: {
+        ...data,
+        password: hashedPassword,
+      },
+    });
+  }
+
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (user && (await bcrypt.compare(pass, user.password))) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
   }
 
   async findAll(user: User): Promise<User[]> {
@@ -39,6 +69,13 @@ export class UsersService {
     return this.prisma.user.update({
       where: { id: userId },
       data,
+    });
+  }
+
+  async setAccessToken(userId: number, accessToken: string): Promise<User> {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { access_token: accessToken },
     });
   }
 

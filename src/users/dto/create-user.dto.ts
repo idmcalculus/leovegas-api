@@ -4,6 +4,7 @@ import {
   IsString,
   IsEnum,
   MinLength,
+  IsOptional,
 } from 'class-validator';
 import { Role } from '../roles/role.enum';
 
@@ -44,7 +45,7 @@ export class CreateUserDto {
    * Access token for the user
    * @example 12345678
    */
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  access_token: string;
+  access_token?: string;
 }
