@@ -10,6 +10,6 @@ export class AppController {
   getHello(@Req() req: Request, @Res() res: Response): void {
     const host = req.protocol + '://' + req.get('host');
     res.set('Content-Type', 'text/html');
-    res.send(this.appService.getHello(host));
+    res.send(this.appService.getHello(res, host));
   }
 }

@@ -15,13 +15,11 @@ describe('AppController', () => {
         {
           provide: AppService,
           useValue: {
-            getHello: jest.fn().mockImplementation(
-              (host) => `
-              <h3 style="display: flex; align-items: center; justify-content: center;">
-                Welcome to Leovegas API! Please visit <a href="${host}/api-doc"> API Doc </a> to see the documentation.
-              </h3>
-            `,
-            ),
+            getHello: jest
+              .fn()
+              .mockImplementation(
+                (res, host) => `hello from app service ${host}`,
+              ),
           },
         },
       ],
@@ -42,11 +40,7 @@ describe('AppController', () => {
       mockResponse.send = jest.fn().mockReturnThis();
 
       const mockHost = 'http://localhost:3000';
-      const expectedOutput = `
-        <h3 style="display: flex; align-items: center; justify-content: center;">
-          Welcome to Leovegas API! Please visit <a href="${mockHost}/api-doc"> API Doc </a> to see the documentation.
-        </h3>
-      `;
+      const expectedOutput = `hello from app service ${mockHost}`;
 
       appController.getHello(mockRequest, mockResponse);
 
@@ -55,7 +49,7 @@ describe('AppController', () => {
         'text/html',
       );
       expect(mockResponse.send).toHaveBeenCalledWith(expectedOutput);
-      expect(appService.getHello).toHaveBeenCalledWith(mockHost);
+      expect(appService.getHello).toHaveBeenCalledWith(mockResponse, mockHost);
     });
   });
 });

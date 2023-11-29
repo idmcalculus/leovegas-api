@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import * as crypto from 'crypto';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
@@ -8,6 +9,7 @@ import { AllExceptionsFilter } from './filters/all_exceptions.filter';
 import { HttpExceptionFilter } from './filters/http_exceptions.filter';
 import { PrismaExceptionFilter } from './filters/prisma_exceptions.filter';
 import { ValidationExceptionFilter } from './filters/validation_exceptions.filter';
+import { NextFunction, Request, Response } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -37,6 +39,16 @@ async function bootstrap() {
   app.useGlobalFilters(new JsonWebTokenExceptionFilter());
   app.useGlobalFilters(new PrismaExceptionFilter());
   app.useGlobalFilters(new ValidationExceptionFilter());
+
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const nonce = crypto.randomBytes(16).toString('base64');
+    res.setHeader(
+      'Content-Security-Policy',
+      `script-src 'self' 'nonce-${nonce}'`,
+    );
+    res.locals.nonce = nonce;
+    next();
+  });
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
