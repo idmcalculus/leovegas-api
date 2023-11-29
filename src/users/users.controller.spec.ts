@@ -175,7 +175,7 @@ describe('UsersController', () => {
       const userId = 1;
       await expect(
         controller.remove({ user: mockUser } as any, userId.toString()),
-      ).resolves.toEqual(mockUser);
+      ).resolves.toEqual({ success: true });
       expect(service.removeUser).toHaveBeenCalledWith(mockUser, userId);
     });
 

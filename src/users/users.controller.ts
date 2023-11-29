@@ -110,6 +110,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async remove(@Req() req: Request & { user: any }, @Param('id') id: string) {
-    return this.usersService.removeUser(req.user, +id);
+    const deletedUser = this.usersService.removeUser(req.user, +id);
+    return { success: !!deletedUser };
   }
 }
