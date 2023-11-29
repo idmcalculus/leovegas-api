@@ -68,6 +68,23 @@ describe('UsersController', () => {
 
     controller = module.get<UsersController>(UsersController);
     service = module.get<UsersService>(UsersService);
+
+    service.createUser = jest
+      .fn()
+      .mockImplementation((adminUser, createUserDto) => {
+        if (adminUser.role !== 'ADMIN') {
+          throw new ForbiddenException();
+        }
+
+        return {
+          ...createUserDto,
+          id: expect.any(Number),
+          password: expect.any(String),
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+          access_token: expect.any(String),
+        };
+      });
   });
 
   it('should be defined', () => {
@@ -83,8 +100,26 @@ describe('UsersController', () => {
         role: Role.User,
         access_token: 'accesstoken',
       };
-      await expect(controller.create(createUserDto)).resolves.toEqual(mockUser);
-      expect(service.createUser).toHaveBeenCalledWith(createUserDto);
+
+      const mockAdminUser = {
+        id: 1,
+        name: 'Admin User',
+        email: 'admin@example.com',
+        role: 'ADMIN',
+      };
+
+      // Mock request object
+      const mockReq = {
+        user: mockAdminUser,
+      };
+
+      await controller.create(mockReq as any, createUserDto);
+
+      // Expect the service to have been called with the mock admin user and createUserDto
+      expect(service.createUser).toHaveBeenCalledWith(
+        mockAdminUser,
+        createUserDto,
+      );
     });
   });
 

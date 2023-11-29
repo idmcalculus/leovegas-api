@@ -28,10 +28,6 @@ RUN npm ci --include=dev
 COPY --link prisma .
 RUN npx prisma generate
 
-# Run Prisma migrations
-# Note: You need to have DATABASE_URL environment variable available for migrations
-RUN npx prisma migrate deploy
-
 # Copy application code
 COPY --link . .
 

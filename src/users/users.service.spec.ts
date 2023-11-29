@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 
 // Mock data
 const adminUser = {
@@ -32,6 +33,11 @@ const createUserDto = {
   password: 'hashedpassword',
   role: 'USER',
 };
+
+// Mock bcrypt.hash
+jest.mock('bcrypt', () => ({
+  hash: jest.fn().mockResolvedValue('hashedpassword'),
+}));
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -93,10 +99,17 @@ describe('UsersService', () => {
   });
 
   it('should create a user', async () => {
-    await expect(service.createUser(createUserDto)).resolves.toEqual(
+    await expect(service.createUser(adminUser, createUserDto)).resolves.toEqual(
       regularUser,
     );
-    expect(prisma.user.create).toHaveBeenCalledWith({ data: createUserDto });
+    expect(bcrypt.hash).toHaveBeenCalledWith('hashedpassword', 10);
+
+    expect(prisma.user.create).toHaveBeenCalledWith({
+      data: {
+        ...createUserDto,
+        password: 'hashedpassword',
+      },
+    });
   });
 
   it('should find all users if admin', async () => {

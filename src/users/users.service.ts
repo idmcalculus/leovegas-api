@@ -12,7 +12,15 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
+  async createUser(
+    currentUser: User,
+    data: Prisma.UserCreateInput,
+  ): Promise<User> {
+    // Check if the current user is an admin
+    if (currentUser.role !== 'ADMIN') {
+      throw new ForbiddenException('Only admins can create new users');
+    }
+
     // Check if the email already exists
     const existingUser = await this.prisma.user.findUnique({
       where: { email: data.email },

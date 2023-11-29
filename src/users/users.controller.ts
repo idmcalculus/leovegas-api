@@ -35,6 +35,8 @@ export class RemoveUserResponse {
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   @ApiResponse({
     status: 201,
@@ -42,8 +44,12 @@ export class UsersController {
     type: UserDto,
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  async create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto);
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  async create(
+    @Req() req: Request & { user: any },
+    @Body() createUserDto: CreateUserDto,
+  ) {
+    return this.usersService.createUser(req.user, createUserDto);
   }
 
   @ApiBearerAuth()

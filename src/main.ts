@@ -3,6 +3,11 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
+import { JsonWebTokenExceptionFilter } from './filters/jsonwebtoken_exception.filter';
+import { AllExceptionsFilter } from './filters/all_exceptions.filter';
+import { HttpExceptionFilter } from './filters/http_exceptions.filter';
+import { PrismaExceptionFilter } from './filters/prisma_exceptions.filter';
+import { ValidationExceptionFilter } from './filters/validation_exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,6 +31,12 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-doc', app, document);
+
+  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new JsonWebTokenExceptionFilter());
+  app.useGlobalFilters(new PrismaExceptionFilter());
+  app.useGlobalFilters(new ValidationExceptionFilter());
 
   const port = process.env.PORT || 3000;
   await app.listen(port);

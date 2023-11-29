@@ -1,12 +1,12 @@
-// auth.controller.ts
 import { Controller, Post, Body } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiProperty,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
+import { LoginDto } from './dto/login.dto';
+
+export class loginResponse {
+  @ApiProperty()
+  access_token: string;
+}
 
 @ApiTags('auth')
 @Controller('auth')
@@ -17,10 +17,10 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'The user has been successfully logged in.',
-    type: Object,
+    type: loginResponse,
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  async login(@Body() body: any) {
+  async login(@Body() body: LoginDto) {
     return this.authService.validateUser(body.email, body.password);
   }
 }
