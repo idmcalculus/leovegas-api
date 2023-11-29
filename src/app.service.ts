@@ -14,8 +14,8 @@ export class AppService {
         <div class="postman-run-button"
         data-postman-action="collection/fork"
         data-postman-visibility="public"
-        data-postman-var-1="8025750-27360a8f-fe7d-47f4-942b-d9ed70133bbf"
-        data-postman-collection-url="entityId=8025750-27360a8f-fe7d-47f4-942b-d9ed70133bbf&entityType=collection&workspaceId=9d119129-11ee-4c3e-88ef-6706fe469018"></div>
+        data-postman-var-1="8025750-5f7cceb7-79cf-40e5-987e-2b8d3b429d70"
+        data-postman-collection-url="entityId=8025750-5f7cceb7-79cf-40e5-987e-2b8d3b429d70&entityType=collection&workspaceId=0e2a8a06-6749-4c5e-baf7-c3bda1a1bd20"></div>
 
         <script nonce="${nonce}" src="/postmanButtonInjector.js"></script>
         <script nonce="${nonce}">
