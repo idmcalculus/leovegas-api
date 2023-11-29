@@ -44,12 +44,19 @@ export class UsersService {
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    if (user && (await bcrypt.compare(pass, user.password))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
+    if (!user) {
+      throw new NotFoundException('User with email not found');
     }
-    return null;
+
+    const passwordMatch = await bcrypt.compare(pass, user.password);
+
+    if (!passwordMatch) {
+      throw new ForbiddenException('Invalid credentials');
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = user;
+    return result;
   }
 
   async findAll(user: User): Promise<User[]> {
